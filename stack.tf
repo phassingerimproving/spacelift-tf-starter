@@ -1,5 +1,25 @@
 data "spacelift_current_stack" "this" {}
 
+resource "spacelift_stack" "eval" {
+  name = "Eval"
+
+  github_enterprise {
+    id = "github-spacelift-app"
+    namespace = "phassingerimproving"
+  }
+  repository = "spacelift-eval"
+  branch = "main"
+
+  terraform_version = "1.5.7"
+  terraform_workflow_tool = "TERRAFORM_FOSS"
+  terraform_smart_sanitization = true
+
+  enable_well_known_secret_masking = true
+  github_action_deploy = false
+
+  labels     = ["managed", "depends-on:${data.spacelift_current_stack.this.id}"]
+}
+
 resource "spacelift_stack" "managed" {
   name        = "Managed stack"
   description = "Your first stack managed by Terraform"
